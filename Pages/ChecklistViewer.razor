@@ -10,7 +10,7 @@
 </h3>
 @foreach (var item in checklist.GetProperty("checklistText").GetString().Split("\n"))
 {
-    @item<br/>
+    <tt>@item.Replace("\t", "    ")</tt> <br/>
 }
 
 @code {
@@ -20,7 +20,7 @@
     public string ProjectName { get; set; }
     public JsonElement checklist
     {
-        get 
+        get
         {
             var obj = (new Checklist {ProgramName = ProgramName, ProjectName = ProjectName}).GetObj();
             return obj;
