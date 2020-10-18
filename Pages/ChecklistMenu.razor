@@ -1,0 +1,31 @@
+@page "/Checklists"
+@using System.IO
+
+@foreach (var item in checklists)
+        {
+            var item1 = item.Item1;
+            var item2 = item.Item2;
+            var link = $"ChecklistViewer/{item1}/{item2}";
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="@link">
+                    <span class="oi"></span> @item1 \<br/> @item2
+                </NavLink>
+            </li>
+        }
+
+@code {
+    private List<Tuple<string, string>> checklists = new List<Tuple<string, string>>();
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (var fileName in Directory.GetFiles(
+            Environment.GetEnvironmentVariable("LOCALAPPDATA") + "Low\\Wilhelmsen Studios\\ReEntry\\Checklists",
+            "*.json",
+            SearchOption.AllDirectories))
+        {
+            var source = fileName.Split("\\");
+            var program = source.TakeLast(3).ToArray()[0];
+            var checklist = source.TakeLast(3).ToArray()[1];
+            checklists.Add(new Tuple<string, string>(program, checklist));
+        }
+    }
+}

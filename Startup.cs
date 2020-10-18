@@ -27,6 +27,7 @@ namespace reentry_web_server
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +53,7 @@ namespace reentry_web_server
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapHub<ExportDataHub>(ExportDataHub.HubUrl);
             });
         }
     }

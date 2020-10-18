@@ -1,0 +1,168 @@
+@page "/OBC"
+@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.SignalR.Client;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+
+<input readonly size="2" maxlength="2" id="obcCoreAddress" @bind="@obcCoreAddress">
+<input readonly size="5" maxlength="5" id="obcCoreValue" @bind="@obcCoreValue">
+<br />
+<input readonly size="3" maxlength="3" id="ivi1" @bind="@ivi1">
+<input readonly size="3" maxlength="3" id="ivi2" @bind="@ivi2">
+<input readonly size="3" maxlength="3" id="ivi3" @bind="@ivi3">
+
+@code {
+    public string _obcCoreAddress = "", _obcCoreValue = "", _ivi1 = "", _ivi2 = "", _ivi3 = "";
+    [Parameter]
+    public string obcCoreAddress
+    {
+        get
+        {
+            return _obcCoreAddress;
+        }
+        set
+        {
+            while (value.Length < 2)
+                value = "0" + value;
+            if (!int.TryParse(value, out int numValue))
+                return;
+            _obcCoreAddress = value;
+        }
+    }
+    [Parameter]
+    public string obcCoreValue
+    {
+        get
+        {
+            return _obcCoreValue;
+        }
+        set
+        {
+            while (value.Length < 2)
+                value = "0" + value;
+            if (!int.TryParse(value, out int numValue))
+                return;
+            _obcCoreValue = value;
+        }
+    }
+    [Parameter]
+    public string ivi1
+    {
+        get
+        {
+            return _ivi1;
+        }
+        set
+        {
+            bool flipVal = false;
+            if (!int.TryParse(value, out int numValue))
+                return;
+            if (int.Parse(value) < 0)
+            {
+                flipVal=true;
+                value = (-1 * int.Parse(value)).ToString();
+            }
+            while (int.Parse(value) >= 0 && value.Length < 3)
+                value = "0" + value;
+            if(flipVal)
+                value = "-" + value;
+            _ivi1 = value;
+        }
+    }
+    [Parameter]
+    public string ivi2
+    {
+        get
+        {
+            return _ivi2;
+        }
+        set
+        {
+            bool flipVal = false;
+            if (!int.TryParse(value, out int numValue))
+                return;
+            if (int.Parse(value) < 0)
+            {
+                flipVal=true;
+                value = (-1 * int.Parse(value)).ToString();
+            }
+            while (int.Parse(value) >= 0 && value.Length < 3)
+                value = "0" + value;
+            if(flipVal)
+                value = "-" + value;
+            _ivi2 = value;
+        }
+    }
+    [Parameter]
+    public string ivi3
+    {
+        get
+        {
+            return _ivi3;
+        }
+        set
+        {
+            bool flipVal = false;
+            if (!int.TryParse(value, out int numValue))
+                return;
+            if (int.Parse(value) < 0)
+            {
+                flipVal=true;
+                value = (-1 * int.Parse(value)).ToString();
+            }
+            while (int.Parse(value) >= 0 && value.Length < 3)
+                value = "0" + value;
+            if(flipVal)
+                value = "-" + value;
+            _ivi3 = value;
+        }
+    }
+    private string _hubUrl;
+    private HubConnection _hubConnection;
+    public async Task StartUpdateStream()
+    {
+        try
+        {
+            string baseUrl = navigationManager.BaseUri.Replace("http", "ws");
+            _hubUrl = baseUrl.TrimEnd('/') + ExportDataHub.HubUrl;
+
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(_hubUrl)
+            .Build();
+
+            // _hubConnection.On<string, string>("Broadcast", BroadcastMessage);
+            _hubConnection.On<string>("ExportData", ExportDataMessage);
+
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+    private void ExportDataMessage(string message)
+    {
+        var je = JsonSerializer.Deserialize<JsonElement>(message);
+        var obc = je.GetProperty("OBC");
+        if(obc.ValueKind != JsonValueKind.Object)
+            return;
+        obcCoreAddress = obc.GetProperty("A1").ToString() + obc.GetProperty("A2").ToString();
+        obcCoreValue = obc.GetProperty("D1").ToString() + obc.GetProperty("D2").ToString() + obc.GetProperty("D3").ToString() + obc.GetProperty("D4").ToString() + obc.GetProperty("D5").ToString();
+        ivi1 = obc.GetProperty("IVI1").ToString();
+        ivi2 = obc.GetProperty("IVI2").ToString();
+        ivi3 = obc.GetProperty("IVI3").ToString();
+        StateHasChanged();
+    }
+
+    private async Task DisconnectAsync()
+    {
+        await _hubConnection.StopAsync();
+        await _hubConnection.DisposeAsync();
+
+        _hubConnection = null;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await StartUpdateStream();
+    }
+}
