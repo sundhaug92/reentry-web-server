@@ -1,0 +1,29 @@
+@page "/ChecklistViewer/{ProgramName}/{ProjectName}"
+@using System.Text.Json
+<h1>
+    @ProgramName
+</h1>
+<h2>
+</h2>
+<h3>
+    @checklist.GetProperty("Name")
+</h3>
+@foreach (var item in checklist.GetProperty("checklistText").GetString().Split("\n"))
+{
+    @item<br/>
+}
+
+@code {
+    [Parameter]
+    public string ProgramName { get; set; }
+    [Parameter]
+    public string ProjectName { get; set; }
+    public JsonElement checklist
+    {
+        get 
+        {
+            var obj = (new Checklist {ProgramName = ProgramName, ProjectName = ProjectName}).GetObj();
+            return obj;
+        }
+    }
+}
