@@ -181,3 +181,9 @@ app {
         display: block;
     }
 }
+
+
+.keep-whitespace
+{
+    white-space: pre
+}

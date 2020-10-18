@@ -1,17 +1,100 @@
 @page "/Checklists"
 @using System.IO
 
-@foreach (var item in checklists)
-        {
-            var item1 = item.Item1;
-            var item2 = item.Item2;
-            var link = $"ChecklistViewer/{item1}/{item2}";
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="@link">
-                    <span class="oi"></span> @item1 \<br/> @item2
-                </NavLink>
-            </li>
-        }
+<table>
+    <tbody>
+        <tr>
+            <td>
+            <div id="mercuryList">
+                <h1>Mercury</h1>
+                @foreach (var item in checklists.Where(delegate (Tuple<string, string> t)
+                    {
+                        return t.Item1 == "Mercury";
+                    }).OrderBy(delegate (Tuple<string, string> t)
+                        {
+                            return (new Checklist {ProgramName = t.Item1, ProjectName = t.Item2}).GetObj().GetProperty("Name").ToString();
+                        }))
+                {
+                    var item1 = item.Item1;
+                    var item2 = item.Item2;
+                    var link = $"ChecklistViewer/{item1}/{item2}";
+                    <ul>
+                        <NavLink class="nav-link" href="@link">
+                            <span class="oi"></span> @((new Checklist {ProgramName = item1, ProjectName = item2}).GetObj().GetProperty("Name"))
+                        </NavLink>
+                    </ul>
+                }
+            </div>
+            </td>
+            <td>
+            <div id="geminiList">
+                <h1>Gemini</h1>
+                @foreach (var item in checklists.Where(delegate (Tuple<string, string> t)
+                    {
+                        return t.Item1 == "Gemini";
+                    }).OrderBy(delegate (Tuple<string, string> t)
+                        {
+                            return (new Checklist {ProgramName = t.Item1, ProjectName = t.Item2}).GetObj().GetProperty("Name").ToString();
+                        }))
+                {
+                    var item1 = item.Item1;
+                    var item2 = item.Item2;
+                    var link = $"ChecklistViewer/{item1}/{item2}";
+                    <ul>
+                        <NavLink class="nav-link" href="@link">
+                            <span class="oi"></span> @((new Checklist {ProgramName = item1, ProjectName = item2}).GetObj().GetProperty("Name"))
+                        </NavLink>
+                    </ul>
+                }
+            </div>
+            </td>
+            <td>
+            <div id="commandModuleList">
+                <h1>Apollo CM</h1>
+                @foreach (var item in checklists.Where(delegate (Tuple<string, string> t)
+                    {
+                        return t.Item1 == "CommandModule";
+                    }).OrderBy(delegate (Tuple<string, string> t)
+                        {
+                            return (new Checklist {ProgramName = t.Item1, ProjectName = t.Item2}).GetObj().GetProperty("Name").ToString();
+                        }))
+                {
+                    var item1 = item.Item1;
+                    var item2 = item.Item2;
+                    var link = $"ChecklistViewer/{item1}/{item2}";
+                    <ul>
+                        <NavLink class="nav-link" href="@link">
+                            <span class="oi"></span> @((new Checklist {ProgramName = item1, ProjectName = item2}).GetObj().GetProperty("Name"))
+                        </NavLink>
+                    </ul>
+                }
+            </div>
+            </td>
+            <td>
+            <div id="lunarModuleList">
+                <h1>Apollo LM</h1>
+                @foreach (var item in checklists.Where(delegate (Tuple<string, string> t)
+                    {
+                        return t.Item1 == "LunarModule";
+                    }).OrderBy(delegate (Tuple<string, string> t)
+                        {
+                            return (new Checklist {ProgramName = t.Item1, ProjectName = t.Item2}).GetObj().GetProperty("Name").ToString();
+                        }))
+                {
+                    var item1 = item.Item1;
+                    var item2 = item.Item2;
+                    var link = $"ChecklistViewer/{item1}/{item2}";
+                    <ul>
+                        <NavLink class="nav-link" href="@link">
+                            <span class="oi"></span> @((new Checklist {ProgramName = item1, ProjectName = item2}).GetObj().GetProperty("Name"))
+                        </NavLink>
+                    </ul>
+                }
+            </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 @code {
     private List<Tuple<string, string>> checklists = new List<Tuple<string, string>>();

@@ -4,13 +4,15 @@
     @ProgramName
 </h1>
 <h2>
+    @checklist.GetProperty("Group")
 </h2>
 <h3>
     @checklist.GetProperty("Name")
 </h3>
 @foreach (var item in checklist.GetProperty("checklistText").GetString().Split("\n"))
 {
-    <tt>@item.Replace("\t", "    ")</tt> <br/>
+    <tt class="keep-whitespace">@item.Replace("\t", " ")</tt>
+    <br />
 }
 
 @code {
@@ -22,7 +24,7 @@
     {
         get
         {
-            var obj = (new Checklist {ProgramName = ProgramName, ProjectName = ProjectName}).GetObj();
+            var obj = (new Checklist { ProgramName = ProgramName, ProjectName = ProjectName }).GetObj();
             return obj;
         }
     }
