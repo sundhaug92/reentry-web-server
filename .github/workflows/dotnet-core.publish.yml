@@ -2,14 +2,13 @@ name: .NET Core publish
 
 on: [push]
 
-strategy:
-  matrix:
-    runtime: [win-x64]
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        runtime: [win-x64]
 
     steps:
     - uses: actions/checkout@v2
