@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,7 +17,7 @@ public class Checklist
     }
     public JsonElement GetObj()
     {
-        Console.WriteLine("getObj {0}", Filename);
+        Debug.WriteLine("getObj {0}", Filename);
         return JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Filename));
     }
 }
