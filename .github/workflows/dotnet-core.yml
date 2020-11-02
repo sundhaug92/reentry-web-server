@@ -20,7 +20,7 @@ jobs:
 #    - name: Test
 #      run: dotnet test --no-restore --verbosity normal
     - name: Building self-contained
-      run: dotnet publish -r win-x64 -c Release --self-contained /p:PublishSingleFile=true
+      run: dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true
     - uses: actions/upload-artifact@v2
       with:
         name: Windows 64-bit build
