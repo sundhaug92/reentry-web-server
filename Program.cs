@@ -15,14 +15,27 @@ namespace reentry_web_server
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var urls = new string[] {};
+            var localhostOnly = args.All((s) => s != "everyone");
+            if (!localhostOnly)
+            {
+                Console.WriteLine("Listening on all interfaces");
+                urls.Append("http://*:5000");
+            }
+            else
+            {
+                Console.WriteLine("Listening only on localhost");
+                urls.Append("http://localhost:5000");
+            }
+            CreateHostBuilder(args, urls).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        public static IHostBuilder CreateHostBuilder(string[] args, string[] urls) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                    .UseUrls(urls);
                 });
     }
 }
