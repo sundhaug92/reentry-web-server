@@ -12,22 +12,34 @@ namespace reentry_web_server
     class ExportDataHub : Hub
     {
         IHubContext<ExportDataHub> _hubContext = null;
-        private Timer eventTimer;
+
+        FileSystemWatcher watcher;
         public const string HubUrl = "/ExportData";
 
         public ExportDataHub(IHubContext<ExportDataHub> hubContext)
         {
             _hubContext = hubContext;
-            eventTimer = new Timer(1000.0f / 60f);
-            eventTimer.Elapsed += delegate (object source, ElapsedEventArgs e)
-            {
-                var basePath = Environment.GetEnvironmentVariable("LOCALAPPDATA") + "Low\\Wilhelmsen Studios\\ReEntry\\Export\\";
 
-                var dictObj = new Dictionary<string, object>();
-                // OBC
-                if (File.Exists(basePath + "Gemini\\outputOBC.json"))
-                {
-                    try
+            watcher = new FileSystemWatcher();
+            watcher.Path = Environment.GetEnvironmentVariable("LOCALAPPDATA") + "Low\\Wilhelmsen Studios\\ReEntry\\Export\\";
+            watcher.NotifyFilter = NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.DirectoryName;
+            watcher.Filter = "*.json";
+            watcher.IncludeSubdirectories = true;
+            watcher.Changed += OnFileChanged;
+            watcher.Created += OnFileChanged;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void OnFileChanged(object sender, FileSystemEventArgs e)
+        {
+            var basePath = Environment.GetEnvironmentVariable("LOCALAPPDATA") + "Low\\Wilhelmsen Studios\\ReEntry\\Export\\";
+            var dictObj = new Dictionary<string, object>();
+            if(e.FullPath.EndsWith("outputOBC.json"))
+            {
+                try
                     {
                         var obc = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(basePath + "Gemini\\outputOBC.json"));
                         dictObj["OBC"] = obc;
@@ -35,13 +47,10 @@ namespace reentry_web_server
                     catch(IOException){
                         dictObj["OBC"] = null;
                     }
-                }
-                else
-                    dictObj["OBC"] = null;
                 _hubContext.Clients.All.SendAsync("ExportData", JsonSerializer.Serialize(dictObj));
-            };
-            eventTimer.Enabled = true;
+            }
         }
+
         public async Task Broadcast(string username, string message)
         {
             await Clients.All.SendAsync("Broadcast", username, message);
