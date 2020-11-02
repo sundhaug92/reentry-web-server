@@ -21,7 +21,7 @@ jobs:
 #      run: dotnet test --no-restore --verbosity normal
     - name: Building self-contained
       run: dotnet publish -r win-x64 -c Release --self-contained /p:PublishSingleFile=true
-    - name: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v2
       with:
         name: Windows 64-bit build
         path: bin/Release/netcoreapp3.1/win-x64
