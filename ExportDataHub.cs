@@ -50,6 +50,30 @@ namespace reentry_web_server
                     }
                 _hubContext.Clients.All.SendAsync("ExportData", JsonSerializer.Serialize(dictObj));
             }
+            else if(e.FullPath.EndsWith("outputAGC.json"))
+            {
+                try
+                    {
+                        var agc = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(basePath + "Apollo\\outputAGC.json"));
+                        dictObj["CSM_AGC"] = agc;
+                    }
+                    catch(IOException){
+                        dictObj["CSM_AGC"] = null;
+                    }
+                _hubContext.Clients.All.SendAsync("ExportData", JsonSerializer.Serialize(dictObj));
+            }
+            else if(e.FullPath.EndsWith("outputAGC.json"))
+            {
+                try
+                    {
+                        var agc = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(basePath + "Apollo\\outputLGC.json"));
+                        dictObj["LM_AGC"] = agc;
+                    }
+                    catch(IOException){
+                        dictObj["LM_AGC"] = null;
+                    }
+                _hubContext.Clients.All.SendAsync("ExportData", JsonSerializer.Serialize(dictObj));
+            }
         }
 
         public async Task Broadcast(string username, string message)

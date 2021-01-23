@@ -143,7 +143,11 @@
     private void ExportDataMessage(string message)
     {
         var je = JsonSerializer.Deserialize<JsonElement>(message);
-        var obc = je.GetProperty("OBC");
+            JsonElement obc;
+        if(!je.TryGetProperty("OBC", out obc))
+        {
+            return;
+        }
         if(obc.ValueKind != JsonValueKind.Object)
             return;
         obcCoreAddress = obc.GetProperty("A1").ToString() + obc.GetProperty("A2").ToString();

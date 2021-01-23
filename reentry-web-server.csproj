@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>reentry_web_server</RootNamespace>
-    <VersionPrefix>0.2</VersionPrefix>
+    <VersionPrefix>0.3</VersionPrefix>
     <VersionSuffix>git</VersionSuffix>
   </PropertyGroup>
 
