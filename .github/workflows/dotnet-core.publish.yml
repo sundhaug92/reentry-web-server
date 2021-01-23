@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 5.0.x
     - name: Building ${{ matrix.runtime }}
       run: dotnet publish -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true /p:CopyOutputSymbolsToPublishDirectory=false /p:VersionSuffix=gh-$GITHUB_SHA
     - uses: actions/upload-artifact@v2
