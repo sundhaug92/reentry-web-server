@@ -21,4 +21,4 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.runtime }} build
-        path: bin/Release/net5/${{ matrix.runtime }}/publish
+        path: bin/Release/net5.0/${{ matrix.runtime }}/publish
