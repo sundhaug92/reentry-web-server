@@ -17,8 +17,8 @@ jobs:
       with:
         dotnet-version: 3.1.x
     - name: Building ${{ matrix.runtime }}
-      run: dotnet publish -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true /p:VersionSuffix=gh-$GITHUB_SHA
+      run: dotnet publish -r ${{ matrix.runtime }} -c Release /p:PublishSingleFile=true /p:CopyOutputSymbolsToPublishDirectory=false /p:VersionSuffix=gh-$GITHUB_SHA
     - uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.runtime }} build
-        path: bin/Release/netcoreapp3.1/${{ matrix.runtime }}/publish
+        path: bin/Release/net5/${{ matrix.runtime }}/publish
