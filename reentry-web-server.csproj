@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>reentry_web_server</RootNamespace>
+    <VersionPrefix>0.1</VersionPrefix>
+    <VersionSuffix>git</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
