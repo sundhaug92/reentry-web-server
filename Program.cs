@@ -19,12 +19,12 @@ namespace reentry_web_server
             var localhostOnly = args.All((s) => s != "everyone");
             if (!localhostOnly)
             {
-                Console.WriteLine("Listening on all interfaces");
+                Console.WriteLine("Listening on all interfaces, port 5000");
                 urls.Append("http://*:5000");
             }
             else
             {
-                Console.WriteLine("Listening only on localhost");
+                Console.WriteLine("Listening only on localhost, port 5000");
                 urls.Append("http://localhost:5000");
             }
             CreateHostBuilder(args, urls).Build().Run();
