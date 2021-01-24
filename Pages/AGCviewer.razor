@@ -4,11 +4,191 @@
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
 
+<div style="width: 70px;">
+    <input readonly size="2" maxlength="2" style="width:30px" @bind="@csmProgram">
+    <input readonly size="2" maxlength="2" style="width:30px" @bind="@csmVerb">
+    <input readonly size="2" maxlength="2" style="width:30px" @bind="@csmNoun">
+    <input readonly size="5" maxlength="5" style="width:60px" @bind="@csmRegister1">
+    <input readonly size="5" maxlength="5" style="width:60px" @bind="@csmRegister2">
+    <input readonly size="5" maxlength="5" style="width:60px" @bind="@csmRegister3">
+</div>
+<br/>
+<div style="width: 70px;">
+    <input readonly size="2" maxlength="2" style="width:30px" @bind="@lmProgram">
+    <input readonly size="2" maxlength="2" style="width:30px" @bind="@lmVerb">
+    <input readonly size="2" maxlength="2" style="width:30px" @bind="@lmNoun">
+    <input readonly size="5" maxlength="5" style="width:60px" @bind="@lmRegister1">
+    <input readonly size="5" maxlength="5" style="width:60px" @bind="@lmRegister2">
+    <input readonly size="5" maxlength="5" style="width:60px" @bind="@lmRegister3">
+</div>
 
 
 @code {
     private string _hubUrl;
     private HubConnection _hubConnection;
+
+    string _csmProgram = "", _csmVerb = "", _csmNoun = "", _csmRegister1 = "", _csmRegister2 = "", _csmRegister3 = "";
+    string _lmProgram = "", _lmVerb = "", _lmNoun = "", _lmRegister1 = "", _lmRegister2 = "", _lmRegister3 = "";
+    #region CSM AGC params
+
+    [Parameter]
+    public string csmProgram
+    {
+        get
+        {
+            return _csmProgram;
+        }
+        set
+        {
+            _csmProgram = value;
+        }
+    }
+
+    [Parameter]
+    public string csmVerb
+    {
+        get
+        {
+            return _csmVerb;
+        }
+        set
+        {
+            _csmVerb = value;
+        }
+    }
+
+    [Parameter]
+    public string csmNoun
+    {
+        get
+        {
+            return _csmNoun;
+        }
+        set
+        {
+            _csmNoun = value;
+        }
+    }
+
+    [Parameter]
+    public string csmRegister1
+    {
+        get
+        {
+            return _csmRegister1;
+        }
+        set
+        {
+            _csmRegister1 = value;
+        }
+    }
+
+    [Parameter]
+    public string csmRegister2
+    {
+        get
+        {
+            return _csmRegister2;
+        }
+        set
+        {
+            _csmRegister2 = value;
+        }
+    }
+
+    [Parameter]
+    public string csmRegister3
+    {
+        get
+        {
+            return _csmRegister3;
+        }
+        set
+        {
+            _csmRegister3 = value;
+        }
+    }
+    #endregion
+    #region LM AGC params
+
+    [Parameter]
+    public string lmProgram
+    {
+        get
+        {
+            return _lmProgram;
+        }
+        set
+        {
+            _lmProgram = value;
+        }
+    }
+
+    [Parameter]
+    public string lmVerb
+    {
+        get
+        {
+            return _lmVerb;
+        }
+        set
+        {
+            _lmVerb = value;
+        }
+    }
+
+    [Parameter]
+    public string lmNoun
+    {
+        get
+        {
+            return _lmNoun;
+        }
+        set
+        {
+            _lmNoun = value;
+        }
+    }
+
+    [Parameter]
+    public string lmRegister1
+    {
+        get
+        {
+            return _lmRegister1;
+        }
+        set
+        {
+            _lmRegister1 = value;
+        }
+    }
+
+    [Parameter]
+    public string lmRegister2
+    {
+        get
+        {
+            return _lmRegister2;
+        }
+        set
+        {
+            _lmRegister2 = value;
+        }
+    }
+
+    [Parameter]
+    public string lmRegister3
+    {
+        get
+        {
+            return _lmRegister3;
+        }
+        set
+        {
+            _lmRegister3 = value;
+        }
+    }
+    #endregion
     public async Task StartUpdateStream()
     {
         try
@@ -70,6 +250,26 @@
         var illuminateProg = agc.GetProperty("IlluminateProg").GetInt32() == 1;
         var illuminateRestart = agc.GetProperty("IlluminateRestart").GetInt32() == 1;
         var illuminateTracker = agc.GetProperty("IlluminateTracker").GetInt32() == 1;
+
+        if(spacecraft == "CSM")
+        {
+            csmProgram = program;
+            csmVerb = verb;
+            csmNoun = noun;
+            csmRegister1 = register1;
+            csmRegister2 = register2;
+            csmRegister3 = register3;
+        }
+        else if(spacecraft == "LM")
+        {
+            lmProgram = program;
+            lmVerb = verb;
+            lmNoun = noun;
+            lmRegister1 = register1;
+            lmRegister2 = register2;
+            lmRegister3 = register3;
+        }
+        StateHasChanged();
     }
     private void ExportDataMessage(string message)
     {
