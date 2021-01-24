@@ -143,7 +143,7 @@
     private void ExportDataMessage(string message)
     {
         var je = JsonSerializer.Deserialize<JsonElement>(message);
-            JsonElement obc;
+        JsonElement obc;
         if(!je.TryGetProperty("OBC", out obc))
         {
             return;

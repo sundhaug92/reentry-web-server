@@ -1,0 +1,105 @@
+@page "/AGC"
+@inject NavigationManager navigationManager
+@using Microsoft.AspNetCore.SignalR.Client;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+
+
+
+@code {
+    private string _hubUrl;
+    private HubConnection _hubConnection;
+    public async Task StartUpdateStream()
+    {
+        try
+        {
+            string baseUrl = navigationManager.BaseUri.Replace("http", "ws");
+            _hubUrl = baseUrl.TrimEnd('/') + ExportDataHub.HubUrl;
+
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(_hubUrl)
+            .Build();
+
+            // _hubConnection.On<string, string>("Broadcast", BroadcastMessage);
+            _hubConnection.On<string>("ExportData", ExportDataMessage);
+
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+    private void HandleAGC(string spacecraft, JsonElement agc)
+    {
+        var program =   agc.GetProperty("ProgramD1").GetInt32().ToString() +
+                        agc.GetProperty("ProgramD2").GetInt32().ToString();
+
+        var verb =      agc.GetProperty("VerbD1").GetInt32().ToString() +
+                        agc.GetProperty("VerbD2").GetInt32().ToString();
+
+        var noun =      agc.GetProperty("NounD1").GetInt32().ToString() +
+                        agc.GetProperty("NounD2").GetInt32().ToString();
+
+        var register1 = agc.GetProperty("Register1D1").GetInt32().ToString() +
+                        agc.GetProperty("Register1D2").GetInt32().ToString() +
+                        agc.GetProperty("Register1D3").GetInt32().ToString() +
+                        agc.GetProperty("Register1D4").GetInt32().ToString() +
+                        agc.GetProperty("Register1D5").GetInt32().ToString();
+
+        var register2 = agc.GetProperty("Register2D1").GetInt32().ToString() +
+                        agc.GetProperty("Register2D2").GetInt32().ToString() +
+                        agc.GetProperty("Register2D3").GetInt32().ToString() +
+                        agc.GetProperty("Register2D4").GetInt32().ToString() +
+                        agc.GetProperty("Register2D5").GetInt32().ToString();
+
+        var register3 = agc.GetProperty("Register3D1").GetInt32().ToString() +
+                        agc.GetProperty("Register3D2").GetInt32().ToString() +
+                        agc.GetProperty("Register3D3").GetInt32().ToString() +
+                        agc.GetProperty("Register3D4").GetInt32().ToString() +
+                        agc.GetProperty("Register3D5").GetInt32().ToString();
+
+        var illuminateCompLight = agc.GetProperty("IlluminateCompLight").GetBoolean();
+        var illuminateUplinkActy = agc.GetProperty("IlluminateUplinkActy").GetInt32() == 1;
+        var illuminateNoAtt = agc.GetProperty("IlluminateNoAtt").GetInt32() == 1;
+        var illuminateStby = agc.GetProperty("IlluminateStby").GetInt32() == 1;
+        var illuminateKeyRel = agc.GetProperty("IlluminateKeyRel").GetInt32() == 1;
+        var illuminateOprErr = agc.GetProperty("IlluminateOprErr").GetInt32() == 1;
+        var illuminateTemp = agc.GetProperty("IlluminateTemp").GetInt32() == 1;
+        var illuminateGimbalLock = agc.GetProperty("IlluminateGimbalLock").GetInt32() == 1;
+        var illuminateProg = agc.GetProperty("IlluminateProg").GetInt32() == 1;
+        var illuminateRestart = agc.GetProperty("IlluminateRestart").GetInt32() == 1;
+        var illuminateTracker = agc.GetProperty("IlluminateTracker").GetInt32() == 1;
+    }
+    private void ExportDataMessage(string message)
+    {
+        var je = JsonSerializer.Deserialize<JsonElement>(message);
+        JsonElement agc;
+        if(je.TryGetProperty("CSM_AGC", out agc))
+        {
+            if(agc.ValueKind != JsonValueKind.Object)
+                return;
+            HandleAGC("CSM", agc);
+            StateHasChanged();
+        }
+        else if(je.TryGetProperty("LM_AGC", out agc))
+        {
+            if(agc.ValueKind != JsonValueKind.Object)
+                return;
+            HandleAGC("LM", agc);
+            StateHasChanged();
+        }
+    }
+
+    private async Task DisconnectAsync()
+    {
+        await _hubConnection.StopAsync();
+        await _hubConnection.DisposeAsync();
+
+        _hubConnection = null;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await StartUpdateStream();
+    }
+}
